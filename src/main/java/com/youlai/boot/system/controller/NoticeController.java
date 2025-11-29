@@ -119,7 +119,7 @@ public class NoticeController {
     }
 
     @Operation(summary = "获取我的通知公告分页列表")
-    @GetMapping("/my-page")
+    @GetMapping("/my")
     public PageResult<UserNoticePageVO> getMyNoticePage(
             NoticePageQuery queryParams
     ) {
