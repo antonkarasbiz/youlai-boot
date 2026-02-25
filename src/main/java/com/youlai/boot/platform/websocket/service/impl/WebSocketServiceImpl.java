@@ -2,7 +2,6 @@ package com.youlai.boot.platform.websocket.service.impl;
 
 import com.youlai.boot.platform.websocket.dto.DictChangeEvent;
 import com.youlai.boot.platform.websocket.dto.OnlineUserDTO;
-import com.youlai.boot.platform.websocket.dto.TextMessage;
 import com.youlai.boot.platform.websocket.publisher.WebSocketPublisher;
 import com.youlai.boot.platform.websocket.session.UserSessionRegistry;
 import com.youlai.boot.platform.websocket.service.WebSocketService;
@@ -11,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * WebSocket 服务实现类
@@ -215,7 +215,11 @@ public class WebSocketServiceImpl implements WebSocketService {
             return;
         }
 
-        TextMessage systemMessage = new TextMessage("系统通知", message, System.currentTimeMillis());
+        Map<String, Object> systemMessage = Map.of(
+                "sender", "系统通知",
+                "content", message,
+                "timestamp", System.currentTimeMillis()
+        );
         webSocketPublisher.publish(WebSocketTopics.TOPIC_PUBLIC, systemMessage);
         log.info("✓ 已广播系统消息: {}", message);
     }

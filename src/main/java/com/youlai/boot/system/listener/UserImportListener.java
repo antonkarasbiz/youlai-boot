@@ -68,9 +68,9 @@ public class UserImportListener extends AnalysisEventListener<UserImportDTO> {
         this.userConverter = SpringUtil.getBean(UserConverter.class);
         this.roleList = SpringUtil.getBean(RoleService.class)
                 .list(new LambdaQueryWrapper<Role>().eq(Role::getStatus, StatusEnum.ENABLE.getValue())
-                        .select(Role::getId, Role::getCode));
+                        .select(Role::getId, Role::getCode, Role::getName));
         this.deptList = SpringUtil.getBean(DeptService.class)
-                .list(new LambdaQueryWrapper<Dept>().select(Dept::getId, Dept::getCode));
+                .list(new LambdaQueryWrapper<Dept>().select(Dept::getId, Dept::getCode, Dept::getName));
         this.genderList = SpringUtil.getBean(DictItemService.class)
                 .list(new LambdaQueryWrapper<DictItem>().eq(DictItem::getDictCode, DictCodeEnum.GENDER.getValue()));
         this.excelResult = new ExcelResult();
@@ -157,9 +157,9 @@ public class UserImportListener extends AnalysisEventListener<UserImportDTO> {
 
 
     /**
-     * 根据角色编码获取角色ID
+     * 根据角色编码或名称获取角色ID
      *
-     * @param roleCodes 角色编码 逗号分隔
+     * @param roleCodes 角色编码或名称，逗号分隔
      * @return 角色ID集合
      */
     private List<Long> getRoleIds(String roleCodes) {
@@ -168,7 +168,9 @@ public class UserImportListener extends AnalysisEventListener<UserImportDTO> {
             if (split.length > 0) {
                 List<Long> roleIds = new ArrayList<>();
                 for (String roleCode : split) {
-                    this.roleList.stream().filter(r -> r.getCode().equals(roleCode))
+                    String trimmed = roleCode.trim();
+                    this.roleList.stream()
+                            .filter(r -> r.getCode().equals(trimmed) || r.getName().equals(trimmed))
                             .findFirst().ifPresent(role -> roleIds.add(role.getId()));
                 }
                 return roleIds.stream().distinct().toList();
@@ -178,14 +180,16 @@ public class UserImportListener extends AnalysisEventListener<UserImportDTO> {
     }
 
     /**
-     * 根据部门编码获取部门ID
+     * 根据部门编码或名称获取部门ID
      *
-     * @param deptCode 部门编码
+     * @param deptCode 部门编码或名称
      * @return 部门ID
      */
     private Long getDeptId(String deptCode) {
         if (StrUtil.isNotBlank(deptCode)) {
-            return this.deptList.stream().filter(r -> r.getCode().equals(deptCode))
+            String trimmed = deptCode.trim();
+            return this.deptList.stream()
+                    .filter(r -> r.getCode().equals(trimmed) || r.getName().equals(trimmed))
                     .findFirst().map(Dept::getId).orElse(null);
         }
         return null;

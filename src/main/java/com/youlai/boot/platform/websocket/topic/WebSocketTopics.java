@@ -11,5 +11,4 @@ public final class WebSocketTopics {
 
     public static final String USER_QUEUE_MESSAGES = "/queue/messages";
     public static final String USER_QUEUE_MESSAGE = "/queue/message";
-    public static final String USER_QUEUE_GREETING = "/queue/greeting";
 }
