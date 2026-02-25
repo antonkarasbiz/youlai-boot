@@ -8,7 +8,6 @@ import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
 import cn.hutool.json.JSONUtil;
 import com.aliyun.oss.HttpMethod;
-import com.youlai.boot.common.enums.LogModuleEnum;
 import com.youlai.boot.common.util.IPUtils;
 import com.youlai.boot.security.util.SecurityUtils;
 import com.youlai.boot.system.model.entity.Log;
@@ -94,13 +93,20 @@ public class LogAspect {
         // 创建日志记录
         Log log = new Log();
         log.setExecutionTime(executionTime);
-        if (logAnnotation == null && e != null) {
-            log.setModule(LogModuleEnum.EXCEPTION);
-            log.setContent("系统发生异常");
+
+        // 设置日志模块和内容
+        log.setModule(logAnnotation.module());
+
+        // 异常情况：追加异常信息到日志内容
+        if (e != null) {
+            log.setContent(logAnnotation.value() + "（失败：" + e.getMessage() + "）");
+            // 请求参数（异常时也记录，便于排查问题）
             this.setRequestParameters(joinPoint, log);
-            log.setResponseContent(JSONUtil.toJsonStr(e.getStackTrace()));
+            // 异常堆栈（截取前 2000 字符，避免过长）
+            String stackTrace = JSONUtil.toJsonStr(e.getStackTrace());
+            log.setResponseContent(StrUtil.sub(stackTrace, 0, 2000));
         } else {
-            log.setModule(logAnnotation.module());
+            // 正常情况
             log.setContent(logAnnotation.value());
             // 请求参数
             if (logAnnotation.params()) {
