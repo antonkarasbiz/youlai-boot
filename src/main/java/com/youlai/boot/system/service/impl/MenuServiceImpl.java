@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
-import com.youlai.boot.platform.codegen.model.entity.GenTable;
+import com.youlai.boot.infra.codegen.model.entity.GenTable;
 import com.youlai.boot.security.util.SecurityUtils;
 import com.youlai.boot.system.converter.MenuConverter;
 import com.youlai.boot.system.mapper.MenuMapper;
@@ -163,7 +163,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
             // 双重保障：动态查询"平台管理"目录，过滤其子菜单
             // 通过路由路径识别平台管理目录，避免硬编码
             Menu platformMenu = this.getOne(new LambdaQueryWrapper<Menu>()
-                    .eq(Menu::getRoutePath, "/platform")
+                    .eq(Menu::getRoutePath, "/infra")
                     .eq(Menu::getParentId, SystemConstants.ROOT_NODE_ID)
                     .eq(Menu::getType, MenuTypeEnum.CATALOG.getValue())
                     .last("LIMIT 1")

@@ -1,7 +1,7 @@
 package com.youlai.boot.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.youlai.boot.platform.codegen.model.entity.GenTable;
+import com.youlai.boot.infra.codegen.model.entity.GenTable;
 import com.youlai.boot.system.model.form.MenuForm;
 import com.youlai.boot.common.model.Option;
 import com.youlai.boot.system.model.entity.Menu;
@@ -10,7 +10,6 @@ import com.youlai.boot.system.model.vo.MenuVO;
 import com.youlai.boot.system.model.vo.RouteVO;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * 菜单业务接口

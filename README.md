@@ -87,7 +87,7 @@ youlai-boot
 │   │   ├── filter                      # 过滤器(请求日志、限流)
 │   │   ├── validator                   # 验证器
 │   │   └── web                         # Web响应封装(Result、PageResult等)
-│   ├── platform                        # 平台服务（通用服务）
+│   ├── infra                           # 基础服务
 │   │   ├── codegen                     # 代码生成模块
 │   │   ├── file                        # 文件服务
 │   │   ├── mail                        # 邮件服务

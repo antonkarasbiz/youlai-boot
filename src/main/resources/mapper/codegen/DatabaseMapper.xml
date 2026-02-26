@@ -6,7 +6,7 @@
 <mapper namespace="com.youlai.boot.platform.codegen.mapper.DatabaseMapper">
 
     <!-- 查询数据库表分页 mysql版本-->
-    <select id="getTablePage" resultType="com.youlai.boot.platform.codegen.model.vo.TablePageVO" databaseId="mysql">
+    <select id="getTablePage" resultType="com.youlai.boot.infra.codegen.model.vo.TablePageVO" databaseId="mysql">
         SELECT
             t1.TABLE_NAME ,
             t1.TABLE_COMMENT ,
@@ -35,7 +35,7 @@
     </select>
 
     <!-- 查询数据库表元数据 mysql版本-->
-    <select id="getTableMetadata" resultType="com.youlai.boot.platform.codegen.model.bo.TableMetaData" databaseId="mysql">
+    <select id="getTableMetadata" resultType="com.youlai.boot.infra.codegen.model.bo.TableMetaData" databaseId="mysql">
         SELECT
             TABLE_NAME ,
             TABLE_COMMENT ,
@@ -50,7 +50,7 @@
     </select>
 
     <!-- 获取数据库表字段元数据 mysql版本-->
-    <select id="getTableColumns" resultType="com.youlai.boot.platform.codegen.model.bo.ColumnMetaData" databaseId="mysql">
+    <select id="getTableColumns" resultType="com.youlai.boot.infra.codegen.model.bo.ColumnMetaData" databaseId="mysql">
         SELECT
             COLUMN_NAME,
             DATA_TYPE,
