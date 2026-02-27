@@ -80,7 +80,6 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
                 "配置键已存在");
         Config config = configConverter.toEntity(configForm);
         config.setCreateBy(SecurityUtils.getUserId());
-        config.setIsDeleted(0);
         return this.save(config);
     }
 
@@ -122,11 +121,7 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
     @Override
     public boolean delete(Long id) {
         if (id != null) {
-            return super.update(new LambdaUpdateWrapper<Config>()
-                    .eq(Config::getId,id)
-                    .set(Config::getIsDeleted, 1)
-                    .set(Config::getUpdateBy, SecurityUtils.getUserId())
-            );
+            return super.removeById(id);
         }
         return false;
     }
