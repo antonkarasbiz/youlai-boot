@@ -1,14 +1,10 @@
 package com.youlai.boot.plugin.mybatis;
 
-import com.youlai.boot.common.annotation.DataPermission;
-import com.youlai.boot.common.enums.DataScopeEnum;
 import com.youlai.boot.security.model.RoleDataScope;
 import com.youlai.boot.security.model.SysUserDetails;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
-import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
-import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

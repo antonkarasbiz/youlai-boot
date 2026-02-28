@@ -9,7 +9,6 @@ import com.youlai.boot.core.web.ResultCode;
 import com.youlai.boot.config.property.SecurityProperties;
 import com.youlai.boot.security.model.AuthenticationToken;
 import com.youlai.boot.security.model.UserSession;
-import com.youlai.boot.security.model.RoleDataScope;
 import com.youlai.boot.security.model.SysUserDetails;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.redis.core.RedisTemplate;

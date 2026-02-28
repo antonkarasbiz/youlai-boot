@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.youlai.boot.security.token.TokenManager;
-import com.youlai.boot.security.util.SecurityUtils;
 import com.youlai.boot.system.mapper.UserRoleMapper;
 import com.youlai.boot.system.model.entity.UserRole;
 import com.youlai.boot.system.service.UserRoleService;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**

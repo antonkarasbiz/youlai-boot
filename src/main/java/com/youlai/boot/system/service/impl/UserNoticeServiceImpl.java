@@ -14,8 +14,6 @@ import com.youlai.boot.system.service.UserNoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
  * 用户公告状态服务实现类
  *

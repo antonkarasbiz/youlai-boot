@@ -9,7 +9,6 @@ import com.youlai.boot.plugin.mybatis.MyDataPermissionHandler;
 import com.youlai.boot.plugin.mybatis.MyMetaObjectHandler;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.VendorDatabaseIdProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -39,8 +39,8 @@ public class SystemCodeGenerator {
                                     .parent("com.youlai.boot.system")
                                     .entity("model.entity")
                                     .mapper("mapper")
-                                    .service("infra")
-                                    .serviceImpl("infra.impl")
+                                    .service("support")
+                                    .serviceImpl("support.impl")
                                     .controller("controller")
                                     .pathInfo(Collections.singletonMap(OutputFile.xml, System.getProperty("user.dir") + "/src/main/resources/mapper"));
                         }
