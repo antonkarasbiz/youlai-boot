@@ -43,11 +43,10 @@ spring:
     username: your-email@example.com
     password: 123456
     properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+      smtp:
+        auth: true
+        starttls:
+          enable: true
     # 邮件发送者
     from: youlaitech@163.com
 mybatis-plus:
