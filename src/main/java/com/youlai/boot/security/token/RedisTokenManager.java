@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.youlai.boot.common.constant.RedisConstants;
+import com.youlai.boot.common.constant.SecurityConstants;
 import com.youlai.boot.core.exception.BusinessException;
 import com.youlai.boot.core.web.ResultCode;
 import com.youlai.boot.config.property.SecurityProperties;
@@ -173,7 +174,8 @@ public class RedisTokenManager implements TokenManager {
      */
     @Override
     public void invalidateToken(String token) {
-        Object value = redisTemplate.opsForValue().get(formatTokenKey(token));
+        String cleanToken = cleanBearerPrefix(token);
+        Object value = redisTemplate.opsForValue().get(formatTokenKey(cleanToken));
         if (value instanceof UserSession userSession) {
             Long userId = userSession.getUserId();
             invalidateUserSessions(userId);
@@ -317,5 +319,16 @@ public class RedisTokenManager implements TokenManager {
         } else {
             redisTemplate.opsForValue().set(key, value); // ttl=-1时永不过期
         }
+    }
+
+
+    /**
+     * 清理 Bearer 前缀
+     */
+    private String cleanBearerPrefix(String token) {
+        if (token.startsWith(SecurityConstants.BEARER_TOKEN_PREFIX)) {
+            return token.substring(SecurityConstants.BEARER_TOKEN_PREFIX.length()).trim();
+        }
+        return token.trim();
     }
 }
