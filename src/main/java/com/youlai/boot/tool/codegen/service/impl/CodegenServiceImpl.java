@@ -85,13 +85,10 @@ public class CodegenServiceImpl implements CodegenService {
             return templateConfig.getTemplatePath();
         }
         if ("API".equals(templateName)) {
-            return "codegen/api.js.vm";
+            return "codegen/frontend/js/api.js.vm";
         }
         if ("VIEW".equals(templateName)) {
-            return "codegen/index.js.vue.vm";
-        }
-        if ("API_TYPES".equals(templateName)) {
-            return "codegen/api-types.js.vm";
+            return "codegen/frontend/js/index.js.vue.vm";
         }
         return templateConfig.getTemplatePath();
     }

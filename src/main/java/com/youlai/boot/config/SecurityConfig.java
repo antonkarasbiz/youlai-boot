@@ -1,5 +1,6 @@
 package com.youlai.boot.config;
 
+import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.hutool.captcha.generator.CodeGenerator;
 import cn.hutool.core.util.ArrayUtil;
 import com.youlai.boot.config.property.SecurityProperties;
@@ -9,9 +10,11 @@ import com.youlai.boot.security.filter.TokenAuthenticationFilter;
 import com.youlai.boot.security.handler.MyAccessDeniedHandler;
 import com.youlai.boot.security.handler.MyAuthenticationEntryPoint;
 import com.youlai.boot.security.provider.SmsAuthenticationProvider;
+import com.youlai.boot.security.provider.WechatMiniAuthenticationProvider;
 import com.youlai.boot.security.token.TokenManager;
 import com.youlai.boot.security.service.SysUserDetailsService;
 import com.youlai.boot.system.service.ConfigService;
+import com.youlai.boot.system.service.UserSocialService;
 import com.youlai.boot.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -53,6 +56,9 @@ public class SecurityConfig {
     private final CodeGenerator codeGenerator;
     private final ConfigService configService;
     private final SecurityProperties securityProperties;
+
+    private final WxMaService wxMaService;
+    private final UserSocialService userSocialService;
 
     /**
      * 配置安全过滤链 SecurityFilterChain
@@ -129,16 +135,26 @@ public class SecurityConfig {
     }
 
     /**
+     * 微信小程序认证 Provider
+     */
+    @Bean
+    public WechatMiniAuthenticationProvider wechatMiniAuthenticationProvider() {
+        return new WechatMiniAuthenticationProvider(wxMaService, userSocialService);
+    }
+
+    /**
      * 认证管理器
      */
     @Bean
     public AuthenticationManager authenticationManager(
             DaoAuthenticationProvider daoAuthenticationProvider,
-            SmsAuthenticationProvider smsAuthenticationProvider
+            SmsAuthenticationProvider smsAuthenticationProvider,
+            WechatMiniAuthenticationProvider wechatMiniAuthenticationProvider
     ) {
         return new ProviderManager(
                 daoAuthenticationProvider,
-                smsAuthenticationProvider
+                smsAuthenticationProvider,
+                wechatMiniAuthenticationProvider
         );
     }
 }

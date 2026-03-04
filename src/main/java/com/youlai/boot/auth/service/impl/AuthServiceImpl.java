@@ -1,21 +1,30 @@
 package com.youlai.boot.auth.service.impl;
 
+import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.hutool.captcha.AbstractCaptcha;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.generator.CodeGenerator;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import com.youlai.boot.auth.model.vo.CaptchaVO;
+import com.youlai.boot.auth.model.vo.WechatLoginResult;
 import com.youlai.boot.auth.service.AuthService;
 import com.youlai.boot.common.constant.RedisConstants;
 import com.youlai.boot.common.enums.CaptchaTypeEnum;
 import com.youlai.boot.config.property.CaptchaProperties;
-import com.youlai.boot.support.sms.enums.SmsTypeEnum;
-import com.youlai.boot.support.sms.service.SmsService;
+import com.youlai.boot.security.exception.NeedBindMobileException;
 import com.youlai.boot.security.model.AuthenticationToken;
 import com.youlai.boot.security.model.SmsAuthenticationToken;
+import com.youlai.boot.security.model.SysUserDetails;
+import com.youlai.boot.security.model.WechatMiniAuthenticationToken;
 import com.youlai.boot.security.token.TokenManager;
 import com.youlai.boot.security.util.SecurityUtils;
+import com.youlai.boot.support.sms.enums.SmsTypeEnum;
+import com.youlai.boot.support.sms.service.SmsService;
+import com.youlai.boot.system.enums.SocialPlatformEnum;
+import com.youlai.boot.system.model.entity.User;
+import com.youlai.boot.system.service.UserSocialService;
+import com.youlai.boot.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,8 +33,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.awt.*;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -50,6 +61,9 @@ public class AuthServiceImpl implements AuthService {
 
     private final SmsService smsService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final UserSocialService userSocialService;
+    private final UserService userService;
+    private final WxMaService wxMaService;
 
     /**
      * 用户名密码登录
@@ -196,6 +210,152 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthenticationToken refreshToken(String refreshToken) {
         return tokenManager.refreshToken(refreshToken);
+    }
+
+    /**
+     * 微信小程序登录（个人小程序）
+     */
+    @Override
+    public WechatLoginResult loginByWechatMini(String code) {
+        WechatMiniAuthenticationToken token = new WechatMiniAuthenticationToken(code);
+
+        try {
+            Authentication authentication = authenticationManager.authenticate(token);
+            AuthenticationToken authToken = tokenManager.generateToken(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return WechatLoginResult.success(authToken);
+        } catch (NeedBindMobileException e) {
+            return WechatLoginResult.needBindMobile(e.getOpenid());
+        }
+    }
+
+    /**
+     * 微信小程序一键登录（企业小程序）
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AuthenticationToken wechatMiniLoginWithPhone(String loginCode, String phoneCode) {
+        // 1. 用 loginCode 换取 openid
+        cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult session;
+        try {
+            session = wxMaService.jsCode2SessionInfo(loginCode);
+        } catch (Exception e) {
+            log.error("微信小程序一键登录失败：获取openid异常，loginCode={}", loginCode, e);
+            throw new IllegalArgumentException("微信登录失败：" + e.getMessage());
+        }
+        String openid = session.getOpenid();
+
+        // 2. 用 phoneCode 换取手机号
+        cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo phoneInfo;
+        try {
+            phoneInfo = wxMaService.getUserService().getPhoneNoInfo(phoneCode);
+        } catch (Exception e) {
+            log.error("微信小程序一键登录失败：获取手机号异常，phoneCode={}", phoneCode, e);
+            throw new IllegalArgumentException("获取手机号失败：" + e.getMessage());
+        }
+        String mobile = phoneInfo.getPhoneNumber();
+
+        log.info("微信小程序一键登录：openid={}, mobile={}", openid, mobile);
+
+        // 3. 查询或创建用户
+        User user = userService.lambdaQuery()
+                .eq(User::getMobile, mobile)
+                .one();
+
+        if (user == null) {
+            user = new User();
+            user.setMobile(mobile);
+            user.setUsername("wx_" + IdUtil.fastSimpleUUID().substring(0, 8));
+            user.setNickname(phoneInfo.getNickName() != null ? phoneInfo.getNickName() : "微信用户");
+            user.setAvatar(phoneInfo.getAvatarUrl());
+            user.setStatus(1);
+            user.setIsDeleted(0);
+            user.setCreateTime(LocalDateTime.now());
+            user.setUpdateTime(LocalDateTime.now());
+            userService.save(user);
+            log.info("微信小程序一键登录：创建新用户，mobile={}, userId={}", mobile, user.getId());
+        }
+
+        // 4. 绑定 openid
+        userSocialService.bindOrUpdate(
+                user.getId(),
+                SocialPlatformEnum.WECHAT_MINI,
+                openid,
+                session.getUnionid(),
+                user.getNickname(),
+                user.getAvatar(),
+                session.getSessionKey()
+        );
+
+        // 5. 生成 token
+        SysUserDetails userDetails = new SysUserDetails(userService.getAuthInfoByMobile(mobile));
+        AuthenticationToken authToken = tokenManager.generateToken(userDetails);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities())
+        );
+
+        log.info("微信小程序一键登录成功：mobile={}, openid={}", mobile, openid);
+
+        return authToken;
+    }
+
+    /**
+     * 微信小程序绑定手机号
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public AuthenticationToken bindMobileForWechatMini(String openid, String mobile, String smsCode) {
+        // 1. 验证短信验证码
+        String cacheKey = StrUtil.format(RedisConstants.Captcha.SMS_LOGIN_CODE, mobile);
+        String cachedCode = (String) redisTemplate.opsForValue().get(cacheKey);
+
+        if (!StrUtil.equals(smsCode, cachedCode)) {
+            throw new IllegalArgumentException("验证码错误");
+        }
+
+        // 删除验证码
+        redisTemplate.delete(cacheKey);
+
+        // 2. 查询或创建用户
+        User user = userService.lambdaQuery()
+                .eq(User::getMobile, mobile)
+                .one();
+
+        if (user == null) {
+            // 创建新用户
+            user = new User();
+            user.setMobile(mobile);
+            user.setUsername("wx_" + IdUtil.fastSimpleUUID().substring(0, 8));
+            user.setNickname("微信用户");
+            user.setStatus(1);
+            user.setIsDeleted(0);
+            user.setCreateTime(LocalDateTime.now());
+            user.setUpdateTime(LocalDateTime.now());
+            userService.save(user);
+            log.info("微信小程序绑定手机号：创建新用户，mobile={}, userId={}", mobile, user.getId());
+        }
+
+        // 3. 绑定第三方账号
+        userSocialService.bindOrUpdate(
+                user.getId(),
+                SocialPlatformEnum.WECHAT_MINI,
+                openid,
+                null,
+                null,
+                null,
+                null
+        );
+
+        // 4. 生成token
+        SysUserDetails userDetails = new SysUserDetails(userService.getAuthInfoByMobile(mobile));
+        AuthenticationToken authToken = tokenManager.generateToken(userDetails);
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities())
+        );
+
+        log.info("微信小程序绑定手机号成功：mobile={}, openid={}", mobile, openid);
+
+        return authToken;
     }
 
 }

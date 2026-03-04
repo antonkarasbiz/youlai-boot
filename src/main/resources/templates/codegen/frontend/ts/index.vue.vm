@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
-    <div class="search-container">
-      <el-form ref="queryFormRef" :model="queryParams" :inline="true">
+    <div class="filter-section">
+      <el-form ref="queryFormRef" :model="queryParams" :inline="true" label-width="auto">
         #foreach($fieldConfig in $fieldConfigs)
           #if($fieldConfig.isShowInQuery == 1)
             <el-form-item label="$fieldConfig.fieldComment" prop="$fieldConfig.fieldName">
@@ -95,29 +95,34 @@
       </el-form>
     </div>
 
-    <el-card shadow="never">
-      <div class="mb-10px">
-        <el-button
-            v-hasPerm="['${moduleName}:${entityKebab}:create']"
-            type="success"
-            icon="plus"
-            @click="handleOpenDialog()"
-        >新增</el-button>
-        <el-button
-            v-hasPerm="['${moduleName}:${entityKebab}:delete']"
-            type="danger"
-            :disabled="removeIds.length === 0"
-            icon="delete"
-            @click="handleDelete()"
-        >删除</el-button>
+    <el-card shadow="hover" class="table-section">
+      <div class="table-section__toolbar">
+        <div class="table-section__toolbar--actions">
+          <el-button
+              v-hasPerm="['${moduleName}:${entityKebab}:create']"
+              type="success"
+              icon="plus"
+              @click="handleCreateClick()"
+          >新增</el-button>
+          <el-button
+              v-hasPerm="['${moduleName}:${entityKebab}:delete']"
+              type="danger"
+              :disabled="!hasSelection"
+              icon="delete"
+              @click="handleDelete()"
+          >删除</el-button>
+        </div>
       </div>
 
       <el-table
         ref="dataTableRef"
         v-loading="loading"
         :data="pageData"
-        highlight-current-row
         border
+        stripe
+        highlight-current-row
+        class="table-section__content"
+        row-key="id"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center" />
@@ -148,7 +153,7 @@
                 size="small"
                 link
                 icon="edit"
-                @click="handleOpenDialog(String(scope.row.id))"
+                @click="handleEditClick(String(scope.row.id))"
             >
               编辑
             </el-button>
@@ -171,7 +176,7 @@
           v-model:total="total"
           v-model:page="queryParams.pageNum"
           v-model:limit="queryParams.pageSize"
-          @pagination="handleQuery()"
+          @pagination="fetchList"
       />
     </el-card>
 
@@ -180,7 +185,7 @@
         v-model="dialog.visible"
         :title="dialog.title"
         width="500px"
-        @close="handleCloseDialog"
+        @close="closeDialog"
     >
       <el-form ref="dataFormRef" :model="formData" :rules="rules" label-width="100px">
           #foreach($fieldConfig in $fieldConfigs)
@@ -260,35 +265,38 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="handleSubmit()">确定</el-button>
-          <el-button @click="handleCloseDialog()">取消</el-button>
+          <el-button @click="closeDialog()">取消</el-button>
         </div>
       </template>
     </el-dialog>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+  import { onMounted, reactive, ref } from "vue";
+  import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from "element-plus";
+  import { useTableSelection } from "@/composables";
+  import ${entityName}API from "@/api/${moduleName}/${entityKebab}";
+  import type { ${entityName}Item, ${entityName}Form, ${entityName}QueryParams } from "@/types/api";
+
   defineOptions({
     name: "${entityName}",
     inheritAttrs: false,
   });
 
-  import ${entityName}API from "@/api/${moduleName}/${entityKebab}";
-
-  const queryFormRef = ref();
-  const dataFormRef = ref();
+  const queryFormRef = ref<FormInstance>();
+  const dataFormRef = ref<FormInstance>();
 
   const loading = ref(false);
-  const removeIds = ref([]);
   const total = ref(0);
 
-  const queryParams = reactive({
+  const queryParams = reactive<${entityName}QueryParams>({
     pageNum: 1,
     pageSize: 10,
-  });
+  } as ${entityName}QueryParams);
 
   // $!{businessName}表格数据
-  const pageData = ref([]);
+  const pageData = ref<${entityName}Item[]>([]);
 
   // 弹窗
   const dialog = reactive({
@@ -297,10 +305,10 @@
   });
 
   // $!{businessName}表单数据
-  const formData = reactive({});
+  const formData = reactive<${entityName}Form>({} as ${entityName}Form);
 
   // $!{businessName}表单校验规则
-  const rules = reactive({
+  const rules: FormRules = {
       #if($fieldConfigs)
           #foreach($fieldConfig in ${fieldConfigs})
               #if($fieldConfig.isShowInForm && $fieldConfig.isRequired)
@@ -308,49 +316,64 @@
               #end
           #end
       #end
-  });
+  };
+
+  const { selectedIds, hasSelection, handleSelectionChange } = useTableSelection<${entityName}Item>();
+
+  async function fetchList(): Promise<void> {
+    loading.value = true;
+    try {
+      const data = await ${entityName}API.getPage(queryParams);
+      pageData.value = data.list;
+      total.value = data.total ?? 0;
+    } finally {
+      loading.value = false;
+    }
+  }
 
   /** 查询$!{businessName} */
-  function handleQuery() {
-    loading.value = true;
-          ${entityName}API.getPage(queryParams)
-        .then((data) => {
-          pageData.value = data.list;
-          total.value = data.total ?? 0;
-        })
-        .finally(() => {
-          loading.value = false;
-        });
+  function handleQuery(): void {
+    queryParams.pageNum = 1;
+    fetchList();
   }
 
   /** 重置$!{businessName}查询 */
   function handleResetQuery() {
     queryFormRef.value?.resetFields();
-    queryParams.pageNum = 1;
     handleQuery();
   }
 
-  /** 行复选框选中记录选中ID集合 */
-  function handleSelectionChange(selection) {
-    removeIds.value = selection.map((item) => String(item.id));
+  function openDialog(): void {
+    dialog.visible = true;
   }
 
-  /** 打开$!{businessName}弹窗 */
-  function handleOpenDialog(id) {
-    dialog.visible = true;
-    if (id) {
-      dialog.title = "修改$!{businessName}";
-            ${entityName}API.getFormData(id).then((data) => {
-        Object.assign(formData, data);
-      });
-    } else {
-      dialog.title = "新增$!{businessName}";
-    }
+  function closeDialog(): void {
+    dialog.visible = false;
+    resetForm();
+  }
+
+  function resetForm(): void {
+    dataFormRef.value?.resetFields();
+    dataFormRef.value?.clearValidate();
+    formData.id = undefined;
+  }
+
+  async function handleCreateClick(): Promise<void> {
+    dialog.title = "新增$!{businessName}";
+    openDialog();
+  }
+
+  async function handleEditClick(id: string): Promise<void> {
+    dialog.title = "修改$!{businessName}";
+          ${entityName}API.getFormData(id).then((data) => {
+      Object.assign(formData, data);
+      openDialog();
+    });
   }
 
   /** 提交$!{businessName}表单 */
   function handleSubmit() {
-    dataFormRef.value?.validate((valid) => {
+    dataFormRef.value?.validate((valid: any) => {
       if (valid) {
         loading.value = true;
         const id = formData.id;
@@ -358,7 +381,7 @@
                 ${entityName}API.update(id, formData)
               .then(() => {
                 ElMessage.success("修改成功");
-                handleCloseDialog();
+                closeDialog();
                 handleResetQuery();
               })
               .finally(() => (loading.value = false));
@@ -366,7 +389,7 @@
                 ${entityName}API.create(formData)
               .then(() => {
                 ElMessage.success("新增成功");
-                handleCloseDialog();
+                closeDialog();
                 handleResetQuery();
               })
               .finally(() => (loading.value = false));
@@ -375,17 +398,9 @@
     });
   }
 
-  /** 关闭$!{businessName}弹窗 */
-  function handleCloseDialog() {
-    dialog.visible = false;
-    dataFormRef.value?.resetFields();
-    dataFormRef.value?.clearValidate();
-    formData.id = undefined;
-  }
-
   /** 删除$!{businessName} */
-  function handleDelete(id) {
-    const ids = [id || removeIds.value].join(",");
+  function handleDelete(id?: string) {
+    const ids = [id || selectedIds.value].join(",");
     if (!ids) {
       ElMessage.warning("请勾选删除项");
       return;

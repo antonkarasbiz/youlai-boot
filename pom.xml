@@ -44,7 +44,6 @@
         <aliyun-sdk-oss.version>3.16.3</aliyun-sdk-oss.version>
 
         <!-- redisson 分布式锁 -->
-        <!-- Spring Boot 4.x 必须使用更新的版本 -->
         <redisson.version>4.1.0</redisson.version>
 
         <!-- 自动代码生成 -->
@@ -62,6 +61,8 @@
 
         <!-- 阿里 TransmittableThreadLocal (支持异步场景的ThreadLocal传递) -->
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
+
+        <weixin-java-miniapp.version>4.8.1.B</weixin-java-miniapp.version>
     </properties>
 
     <dependencies>
@@ -271,13 +272,20 @@
             <version>${caffeine.version}</version>
         </dependency>
 
+        <!-- 微信小程序登录 -->
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-miniapp</artifactId>
+            <version>${weixin.java.miniapp.version}</version>
+        </dependency>
+
         <!-- 动态多数据源 -->
         <!--<dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
             <version>${dynamic-datasource.version}</version>
         </dependency>-->
-        
+
     </dependencies>
 
     <build>

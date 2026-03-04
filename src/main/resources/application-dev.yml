@@ -210,8 +210,11 @@ captcha:
   # 验证码有效期(秒)
   expire-seconds: 120
 
-# 微信小程配置
+# 微信小程序配置
 wx:
   miniapp:
-    app-id: xxxxxx
-    app-secret: xxxxxx
+    appid: your-app-id
+    secret: your-app-secret
+    token: your-token
+    aes-key: your-aes-key
+    msg-data-format: JSON

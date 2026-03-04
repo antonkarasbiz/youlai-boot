@@ -1,4 +1,3 @@
-
 # YouLai_Admin 数据库(MySQL 5.7 ~ MySQL 8.x)
 # Copyright (c) 2021-present, youlai.tech
 
@@ -6,13 +5,13 @@
 -- ----------------------------
 -- 1. 创建数据库
 -- ----------------------------
-CREATE DATABASE IF NOT EXISTS youlai_admin CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS youlai_admin_template CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci;
 
 
 -- ----------------------------
 -- 2. 创建表 && 数据初始化
 -- ----------------------------
-USE youlai_admin;
+USE youlai_admin_template;
 
 SET NAMES utf8mb4;  # 设置字符集
 SET FOREIGN_KEY_CHECKS = 0; # 关闭外键检查，加快导入速度
@@ -136,15 +135,11 @@ CREATE TABLE `sys_menu`  (
 -- ----------------------------
 -- Records of sys_menu
 -- ----------------------------
--- 顶级目录（1-9）：系统/代码生成/文档/接口文档/组件/演示/多级/路由
+-- 顶级目录：系统管理/代码生成/平台文档/接口文档
 INSERT INTO `sys_menu` VALUES (1, 0, '0', '系统管理', 'C', '', '/system', 'Layout', NULL, NULL, NULL, 1, 1, 'system', '/system/user', now(), now(), NULL);
 INSERT INTO `sys_menu` VALUES (2, 0, '0', '代码生成', 'C', '', '/codegen', 'Layout', NULL, NULL, NULL, 1, 2, 'code', '/codegen/index', now(), now(), NULL);
 INSERT INTO `sys_menu` VALUES (4, 0, '0', '平台文档', 'C', '', '/doc', 'Layout', NULL, NULL, NULL, 1, 4, 'document', '', now(), now(), NULL);
 INSERT INTO `sys_menu` VALUES (5, 0, '0', '接口文档', 'C', '', '/api', 'Layout', NULL, NULL, NULL, 1, 5, 'api', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (6, 0, '0', '组件封装', 'C', '', '/component', 'Layout', NULL, NULL, NULL, 1, 6, 'menu', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (7, 0, '0', '功能演示', 'C', '', '/function', 'Layout', NULL, NULL, NULL, 1, 7, 'menu', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (8, 0, '0', '多级菜单', 'C', NULL, '/multi-level', 'Layout', NULL, 1, NULL, 1, 8, 'cascader', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (9, 0, '0', '路由参数', 'C', '', '/route-param', 'Layout', NULL, NULL, NULL, 1, 9, 'el-icon-ElementPlus', '', now(), now(), NULL);
 
 -- 系统管理
 INSERT INTO `sys_menu` VALUES (210, 1, '0,1', '用户管理', 'M', 'User', 'user', 'system/user/index', NULL, NULL, 1, 1, 1, 'el-icon-User', NULL, now(), now(), NULL);
@@ -216,33 +211,6 @@ INSERT INTO `sys_menu` VALUES (504, 4, '0,4', '内部文档', 'M', NULL, 'intern
 -- 接口文档
 INSERT INTO `sys_menu` VALUES (601, 5, '0,5', 'Apifox', 'M', 'Apifox', 'apifox', 'demo/api/apifox', NULL, NULL, 1, 1, 1, 'api', '', now(), now(), NULL);
 
--- 组件封装
-INSERT INTO `sys_menu` VALUES (701, 6, '0,6', '富文本编辑器', 'M', 'WangEditor', 'wang-editor', 'demo/wang-editor', NULL, NULL, 1, 1, 2, '', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (702, 6, '0,6', '图片上传', 'M', 'Upload', 'upload', 'demo/upload', NULL, NULL, 1, 1, 3, '', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (703, 6, '0,6', '图标选择器', 'M', 'IconSelect', 'icon-select', 'demo/icon-select', NULL, NULL, 1, 1, 4, '', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (704, 6, '0,6', '字典组件', 'M', 'DictDemo', 'dict-demo', 'demo/dictionary', NULL, NULL, 1, 1, 4, '', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (705, 6, '0,6', '增删改查', 'M', 'Curd', 'curd', 'demo/curd/index', NULL, NULL, 1, 1, 0, '', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (706, 6, '0,6', '列表选择器', 'M', 'TableSelect', 'table-select', 'demo/table-select/index', NULL, NULL, 1, 1, 1, '', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (707, 6, '0,6', '拖拽组件', 'M', 'Drag', 'drag', 'demo/drag', NULL, NULL, NULL, 1, 5, '', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (708, 6, '0,6', '滚动文本', 'M', 'TextScroll', 'text-scroll', 'demo/text-scroll', NULL, NULL, NULL, 1, 6, '', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (709, 6, '0,6', '自适应表格操作列', 'M', 'AutoOperationColumn', 'operation-column', 'demo/auto-operation-column', NULL, NULL, 1, 1, 1, '', '', now(), now(), NULL);
-
--- 功能演示
-INSERT INTO `sys_menu` VALUES (801, 7, '0,7', 'Icons', 'M', 'IconDemo', 'icon-demo', 'demo/icons', NULL, NULL, 1, 1, 2, 'el-icon-Notification', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (802, 7, '0,7', '字典实时同步', 'M', 'DictSync', 'dict-sync', 'demo/dict-sync', NULL, NULL, NULL, 1, 3, '', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (803, 7, '0,7', 'VxeTable', 'M', 'VxeTable', 'vxe-table', 'demo/vxe-table/index', NULL, NULL, 1, 1, 4, 'el-icon-MagicStick', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (804, 7, '0,7', 'CURD单文件', 'M', 'CurdSingle', 'curd-single', 'demo/curd-single', NULL, NULL, 1, 1, 5, 'el-icon-Reading', '', now(), now(), NULL);
-
--- 多级菜单示例
-INSERT INTO `sys_menu` VALUES (910, 8, '0,8', '菜单一级', 'C', NULL, 'multi-level1', 'Layout', NULL, 1, NULL, 1, 1, '', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (911, 910, '0,8,910', '菜单二级', 'C', NULL, 'multi-level2', 'Layout', NULL, 0, NULL, 1, 1, '', NULL, now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (912, 911, '0,8,910,911', '菜单三级-1', 'M', NULL, 'multi-level3-1', 'demo/multi-level/children/children/level3-1', NULL, 0, 1, 1, 1, '', '', now(), now(), NULL);
-INSERT INTO `sys_menu` VALUES (913, 911, '0,8,910,911', '菜单三级-2', 'M', NULL, 'multi-level3-2', 'demo/multi-level/children/children/level3-2', NULL, 0, 1, 1, 2, '', '', now(), now(), NULL);
-
--- 路由参数
-INSERT INTO `sys_menu` VALUES (1001, 9, '0,9', '参数(type=1)', 'M', 'RouteParamType1', 'route-param-type1', 'demo/route-param', NULL, 0, 1, 1, 1, 'el-icon-Star', NULL, now(), now(), '{\"type\": \"1\"}');
-INSERT INTO `sys_menu` VALUES (1002, 9, '0,9', '参数(type=2)', 'M', 'RouteParamType2', 'route-param-type2', 'demo/route-param', NULL, 0, 1, 1, 2, 'el-icon-StarFilled', NULL, now(), now(), '{\"type\": \"2\"}');
-
 -- ----------------------------
 -- Table structure for sys_role
 -- ----------------------------
@@ -304,7 +272,7 @@ INSERT IGNORE INTO `sys_role_dept` VALUES (7, 2);
 -- ============================================
 -- 系统管理员角色菜单权限（role_id=2）
 -- 顶级目录
-INSERT INTO `sys_role_menu` VALUES (2, 1), (2, 2), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9);
+INSERT INTO `sys_role_menu` VALUES (2, 1), (2, 2), (2, 4), (2, 5);
 -- 系统管理
 INSERT INTO `sys_role_menu` VALUES (2, 210), (2, 2101), (2, 2102), (2, 2103), (2, 2104), (2, 2105), (2, 2106), (2, 2107);
 INSERT INTO `sys_role_menu` VALUES (2, 220), (2, 2201), (2, 2202), (2, 2203), (2, 2204), (2, 2205);
@@ -337,12 +305,6 @@ INSERT INTO `sys_role_menu` VALUES (2, 310);
 INSERT INTO `sys_role_menu` VALUES (2, 501), (2, 502), (2, 503), (2, 504);
 -- 接口文档
 INSERT INTO `sys_role_menu` VALUES (2, 601);
--- 组件封装
-INSERT INTO `sys_role_menu` VALUES (2, 701), (2, 702), (2, 703), (2, 704), (2, 705), (2, 706), (2, 707), (2, 708), (2, 709);
--- 功能演示 / 多级菜单
-INSERT INTO `sys_role_menu` VALUES (2, 801), (2, 802), (2, 803), (2, 804), (2, 910), (2, 911), (2, 912), (2, 913);
--- 路由参数
-INSERT INTO `sys_role_menu` VALUES (2, 1001), (2, 1002);
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -364,7 +326,7 @@ CREATE TABLE `sys_user`  (
                              `update_time` datetime COMMENT '更新时间',
                              `update_by` bigint COMMENT '修改人ID',
                              `is_deleted` tinyint(1) DEFAULT 0 COMMENT '逻辑删除标识(0-未删除 1-已删除)',
-                            PRIMARY KEY (`id`) USING BTREE
+                             PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COMMENT = '系统用户表';
 
 -- ----------------------------
@@ -391,14 +353,13 @@ CREATE TABLE `sys_user_role`  (
 -- ----------------------------
 -- Records of sys_user_role
 -- ----------------------------
-INSERT IGNORE INTO `sys_user_role` VALUES (1, 1);
-INSERT IGNORE INTO `sys_user_role` VALUES (2, 2);
-INSERT IGNORE INTO `sys_user_role` VALUES (3, 3);
+INSERT INTO `sys_user_role` VALUES (1, 1);
+INSERT INTO `sys_user_role` VALUES (2, 2);
+INSERT INTO `sys_user_role` VALUES (3, 3);
 INSERT IGNORE INTO `sys_user_role` VALUES (4, 4);
 INSERT IGNORE INTO `sys_user_role` VALUES (5, 5);
 INSERT IGNORE INTO `sys_user_role` VALUES (6, 6);
 INSERT IGNORE INTO `sys_user_role` VALUES (7, 7);
-
 
 -- ----------------------------
 -- Table structure for sys_log
@@ -539,7 +500,7 @@ CREATE TABLE `sys_user_notice` (
                                    `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
                                    `notice_id` bigint NOT NULL COMMENT '公共通知id',
                                    `user_id` bigint NOT NULL COMMENT '用户id',
-                                   `is_read` tinyint DEFAULT '0' COMMENT '读取状态（0: 未读, 1: 已读）',
+                                   `is_read` bigint DEFAULT '0' COMMENT '读取状态（0: 未读, 1: 已读）',
                                    `read_time` datetime COMMENT '阅读时间',
                                    `create_time` datetime NOT NULL COMMENT '创建时间',
                                    `update_time` datetime COMMENT '更新时间',
@@ -557,25 +518,3 @@ INSERT INTO `sys_user_notice` VALUES (7, 7, 2, 1, NULL, now(), now(), 0);
 INSERT INTO `sys_user_notice` VALUES (8, 8, 2, 1, NULL, now(), now(), 0);
 INSERT INTO `sys_user_notice` VALUES (9, 9, 2, 1, NULL, now(), now(), 0);
 INSERT INTO `sys_user_notice` VALUES (10, 10, 2, 1, NULL, now(), now(), 0);
-
--- ----------------------------
--- Table structure for sys_user_social
--- ----------------------------
-DROP TABLE IF EXISTS `sys_user_social`;
-CREATE TABLE `sys_user_social` (
-  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `user_id` bigint NOT NULL COMMENT '用户ID',
-  `platform` varchar(20) NOT NULL COMMENT '平台类型(WECHAT_MINI/WECHAT_MP/ALIPAY/QQ/APPLE)',
-  `openid` varchar(64) NOT NULL COMMENT '平台openid',
-  `unionid` varchar(64) DEFAULT NULL COMMENT '微信unionid',
-  `nickname` varchar(64) DEFAULT NULL COMMENT '第三方昵称',
-  `avatar` varchar(255) DEFAULT NULL COMMENT '第三方头像URL',
-  `session_key` varchar(128) DEFAULT NULL COMMENT '微信session_key',
-  `verified` tinyint(1) DEFAULT 1 COMMENT '是否已验证(1-已验证 0-未验证)',
-  `create_time` datetime DEFAULT NULL COMMENT '绑定时间',
-  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_platform_openid` (`platform`, `openid`),
-  KEY `idx_user_id` (`user_id`),
-  KEY `idx_unionid` (`unionid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户第三方账号绑定表';

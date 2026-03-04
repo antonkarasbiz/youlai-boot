@@ -17,45 +17,45 @@ codegen:
   ## 模板配置
   templateConfigs:
     API:
-      templatePath: codegen/api.ts.vm
+      templatePath: codegen/frontend/ts/api.ts.vm
       subpackageName: api
       extension: .ts
     API_TYPES:
-      templatePath: codegen/api-types.ts.vm
+      templatePath: codegen/frontend/ts/api-types.ts.vm
       subpackageName: types
       extension: .ts
     VIEW:
-      templatePath: codegen/index.vue.vm
+      templatePath: codegen/frontend/ts/index.vue.vm
       subpackageName: views
       extension: .vue
     Controller:
-      templatePath: codegen/controller.java.vm
+      templatePath: codegen/backend/controller.java.vm
       subpackageName: controller
     Service:
-      templatePath: codegen/service.java.vm
+      templatePath: codegen/backend/service.java.vm
       subpackageName: service
     ServiceImpl:
-      templatePath: codegen/serviceImpl.java.vm
+      templatePath: codegen/backend/serviceImpl.java.vm
       subpackageName: service.impl
     Mapper:
-      templatePath: codegen/mapper.java.vm
+      templatePath: codegen/backend/mapper.java.vm
       subpackageName: mapper
     MapperXml:
-      templatePath: codegen/mapper.xml.vm
+      templatePath: codegen/backend/mapper.xml.vm
       subpackageName: mapper
       extension: .xml
     Converter:
-      templatePath: codegen/converter.java.vm
+      templatePath: codegen/backend/converter.java.vm
       subpackageName: converter
     Query:
-      templatePath: codegen/query.java.vm
+      templatePath: codegen/backend/query.java.vm
       subpackageName: model.query
     Form:
-      templatePath: codegen/form.java.vm
+      templatePath: codegen/backend/form.java.vm
       subpackageName: model.form
     Vo:
-      templatePath: codegen/vo.java.vm
+      templatePath: codegen/backend/vo.java.vm
       subpackageName: model.vo
     Entity:
-      templatePath: codegen/entity.java.vm
+      templatePath: codegen/backend/entity.java.vm
       subpackageName: model.entity
