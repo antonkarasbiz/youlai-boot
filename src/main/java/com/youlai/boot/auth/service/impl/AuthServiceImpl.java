@@ -1,6 +1,8 @@
 package com.youlai.boot.auth.service.impl;
 
 import cn.binarywang.wx.miniapp.api.WxMaService;
+import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
+import cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo;
 import cn.hutool.captcha.AbstractCaptcha;
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.generator.CodeGenerator;
@@ -236,7 +238,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(rollbackFor = Exception.class)
     public AuthenticationToken wechatMiniLoginWithPhone(String loginCode, String phoneCode) {
         // 1. 用 loginCode 换取 openid
-        cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult session;
+       WxMaJscode2SessionResult session;
         try {
             session = wxMaService.jsCode2SessionInfo(loginCode);
         } catch (Exception e) {
@@ -246,7 +248,7 @@ public class AuthServiceImpl implements AuthService {
         String openid = session.getOpenid();
 
         // 2. 用 phoneCode 换取手机号
-        cn.binarywang.wx.miniapp.bean.WxMaPhoneNumberInfo phoneInfo;
+        WxMaPhoneNumberInfo phoneInfo;
         try {
             phoneInfo = wxMaService.getUserService().getPhoneNoInfo(phoneCode);
         } catch (Exception e) {
@@ -266,8 +268,8 @@ public class AuthServiceImpl implements AuthService {
             user = new User();
             user.setMobile(mobile);
             user.setUsername("wx_" + IdUtil.fastSimpleUUID().substring(0, 8));
-            user.setNickname(phoneInfo.getNickName() != null ? phoneInfo.getNickName() : "微信用户");
-            user.setAvatar(phoneInfo.getAvatarUrl());
+            user.setNickname("微信用户");
+            user.setAvatar(null);
             user.setStatus(1);
             user.setIsDeleted(0);
             user.setCreateTime(LocalDateTime.now());

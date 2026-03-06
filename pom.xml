@@ -276,7 +276,7 @@
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-miniapp</artifactId>
-            <version>${weixin.java.miniapp.version}</version>
+            <version>${weixin-java-miniapp.version}</version>
         </dependency>
 
         <!-- 动态多数据源 -->

@@ -40,13 +40,32 @@
 
 - **🛠️ 功能模块**：用户、角色、菜单、部门、字典管理等基础模块
 
-## 🌈 项目源码
+## 🌈 项目生态
 
-| 项目 | Gitee | GitHub | GitCode |
-|------|-------|--------|---------|
-| Java 后端 | [youlai-boot](https://gitee.com/youlaiorg/youlai-boot) | [youlai-boot](https://github.com/haoxianrui/youlai-boot) | [youlai-boot](https://gitcode.com/youlai/youlai-boot) |
-| Vue 3 前端 | [vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin) | [vue3-element-admin](https://github.com/youlaitech/vue3-element-admin) | [vue3-element-admin](https://gitcode.com/youlai/vue3-element-admin) |
-| uni-app 移动端 | [vue-uniapp-template](https://gitee.com/youlaiorg/vue-uniapp-template) | [vue-uniapp-template](https://github.com/youlaitech/vue-uniapp-template) | [vue-uniapp-template](https://gitcode.com/youlai/vue-uniapp-template) |
+youlai-boot 配套前端和移动端项目，形成完整的前后端分离开发体系：
+
+### 后端项目
+
+| 项目 | 技术栈 | 说明 | Gitee | GitHub | AtomGit |
+|------|--------|------|-------|--------|---------|
+| youlai-boot | Spring Boot 4 + MyBatis-Plus | 标准版后端 | [Gitee](https://gitee.com/youlaiorg/youlai-boot) | [GitHub](https://github.com/haoxianrui/youlai-boot) | [AtomGit](https://atomgit.com/youlai/youlai-boot) |
+| youlai-boot-tenant | Spring Boot 3 + MyBatis-Plus | 多租户 SaaS 版 | [Gitee](https://gitee.com/youlaiorg/youlai-boot-tenant) | [GitHub](https://github.com/youlaitech/youlai-boot-tenant) | [AtomGit](https://atomgit.com/youlai/youlai-boot-tenant) |
+| youlai-boot-flex | Spring Boot 3 + MyBatis-Flex | MyBatis-Flex 版 | [Gitee](https://gitee.com/youlaiorg/youlai-boot-flex) | - | - |
+
+### 前端项目
+
+| 项目 | 技术栈 | 说明 | Gitee | GitHub | AtomGit |
+|------|--------|------|-------|--------|---------|
+| vue3-element-admin | Vue 3 + TS + Element Plus | 标准版前端 | [Gitee](https://gitee.com/youlaiorg/vue3-element-admin) | [GitHub](https://github.com/youlaitech/vue3-element-admin) | [AtomGit](https://atomgit.com/youlai/vue3-element-admin) |
+| vue3-element-admin-js | Vue 3 + JS + Element Plus | JavaScript 版 | [Gitee](https://gitee.com/youlaiorg/vue3-element-admin-js) | [GitHub](https://github.com/youlaitech/vue3-element-admin-js) | [AtomGit](https://atomgit.com/youlai/vue3-element-admin-js) |
+| vue3-element-template | Vue 3 + TS + Element Plus | 精简开发模板 | [Gitee](https://gitee.com/youlaiorg/vue3-element-template) | [GitHub](https://github.com/youlaitech/vue3-element-template) | [AtomGit](https://atomgit.com/youlai/vue3-element-template) |
+| vue3-naiveui-admin | Vue 3 + TS + Naive UI | Naive UI 版 | [Gitee](https://gitee.com/youlaiorg/vue3-naiveui-admin) | [GitHub](https://github.com/youlaitech/vue3-naiveui-admin) | [AtomGit](https://atomgit.com/youlai/vue3-naiveui-admin) |
+
+### 移动端项目
+
+| 项目 | 技术栈 | 说明 | Gitee | GitHub | AtomGit |
+|------|--------|------|-------|--------|---------|
+| youlai-uniapp | Vue 3 + uni-app | 跨平台应用 | [Gitee](https://gitee.com/youlaiorg/youlai-uniapp) | [GitHub](https://github.com/youlaitech/youlai-uniapp) | [AtomGit](https://atomgit.com/youlai/youlai-uniapp) |
 
 ## 📚 项目文档
 
@@ -54,23 +73,14 @@
 |------|------|
 | 在线接口文档 | [Apifox](https://www.apifox.cn/apidoc/shared-195e783f-4d85-4235-a038-eec696de4ea5) |
 | 官方文档 | [youlai.tech](https://www.youlai.tech/youlai-boot/) |
-| 功能详解 | [CSDN](https://youlai.blog.csdn.net/article/details/145178880) |
-| 入门指南 | [CSDN](https://youlai.blog.csdn.net/article/details/145177011) |
+| 功能详解 | [https://youlai.blog.csdn.net/article/details/145178880](https://youlai.blog.csdn.net/article/details/145178880) |
+| 入门指南 | [https://youlai.blog.csdn.net/article/details/145177011](https://youlai.blog.csdn.net/article/details/145177011) |
 
 ## 📁 项目目录
-
-<details>
-<summary>展开目录结构</summary>
 
 ```
 youlai-boot
 ├── docker/                              # Docker 部署
-│   ├── minio/                           # MinIO 对象存储
-│   ├── mysql/                           # MySQL 数据库
-│   ├── postgres/                        # PostgreSQL 数据库
-│   ├── redis/                           # Redis 缓存
-│   ├── xxljob/                          # XXL-JOB 调度中心
-│   └── docker-compose.yml               # 容器编排脚本
 ├── sql/                                 # 数据库脚本
 │   └── mysql/                           # MySQL 初始化脚本
 ├── src/main/java/com/youlai/boot/
@@ -91,9 +101,6 @@ youlai-boot
 │   │   ├── validator/                   # 参数校验
 │   │   └── web/                         # 响应封装
 │   ├── file/                            # 文件服务
-│   │   ├── controller/                  # 文件接口
-│   │   ├── model/                       # 文件模型
-│   │   └── service/                     # 文件逻辑
 │   ├── plugin/                          # 插件扩展
 │   │   ├── knife4j/                     # 接口文档增强
 │   │   └── mybatis/                     # MyBatis 扩展
@@ -121,7 +128,6 @@ youlai-boot
 │   │   │   ├── bo/                      # 业务对象
 │   │   │   ├── dto/                     # 传输对象
 │   │   │   ├── entity/                  # 实体对象
-│   │   │   ├── event/                   # 事件对象
 │   │   │   ├── form/                    # 表单对象
 │   │   │   ├── query/                   # 查询对象
 │   │   │   └── vo/                      # 视图对象
@@ -131,8 +137,6 @@ youlai-boot
 │   └── YouLaiBootApplication.java       # 启动类
 └── pom.xml                              # Maven 配置
 ```
-
-</details>
 
 ## 🚀 快速开始
 
@@ -177,14 +181,25 @@ docker-compose up -d
 
 ## 💖 技术交流
 
-**公众号**：关注「有来技术」，点击菜单 **交流群** 获取加群二维码。
+欢迎通过以下方式交流学习，获取最新动态和技术支持：
 
-![](https://foruda.gitee.com/images/1737108820762592766/3390ed0d_716974.png)
+<div align="center">
 
-**微信**：添加 **`haoxianrui`**，备注「前端/后端/全栈」
+| 交流方式 | 说明 |
+|:---:|:---|
+| <img src="https://foruda.gitee.com/images/1737108820762592766/3390ed0d_716974.png" width="120"> | 关注「有来技术」公众号<br/>点击菜单 **交流群** 获取加群二维码 |
+| 微信 **`haoxianrui`** | 添加好友时请备注「前端/后端/全栈」|
 
-**博客**：[CSDN](https://youlai.blog.csdn.net/) | [掘金](https://juejin.cn/user/4187394044331261) | [博客园](https://www.cnblogs.com/haoxianrui) | [51CTO](https://blog.51cto.com/youlai) | [知乎](https://www.zhihu.com/people/haoxr)
+</div>
 
-**官网**：[https://www.youlai.tech](https://www.youlai.tech/)
+---
 
-**代码仓库**：[Gitee](https://gitee.com/youlaiorg) | [GitHub](https://github.com/youlaitech) | [AtomGit](https://atomgit.com/youlai)
+如果这个项目对你有帮助，欢迎 ⭐️ Star 支持一下！
+
+<p align="center">
+  <a href="https://gitee.com/youlaiorg/youlai-boot">⭐ Gitee</a> •
+  <a href="https://github.com/haoxianrui/youlai-boot">⭐ GitHub</a> •
+  <a href="https://atomgit.com/youlai/youlai-boot">⭐ AtomGit</a> •
+  <a href="https://www.youlai.tech">🌐 官网</a> •
+  <a href="https://youlai.blog.csdn.net/">📝 博客</a>
+</p>

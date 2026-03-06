@@ -26,7 +26,7 @@ public class LoginRequest {
     @Schema(description = "验证码缓存ID", example = "captcha_id_123")
     private String captchaId;
 
-    @Schema(description = "验证码", example = "1234")
+    @Schema(description = "验证码", example = "123456")
     private String captchaCode;
 }
 

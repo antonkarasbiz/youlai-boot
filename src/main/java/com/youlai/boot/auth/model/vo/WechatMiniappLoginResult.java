@@ -6,10 +6,13 @@ import lombok.Data;
 
 /**
  * 微信小程序登录结果
+ *
+ * @author Ray.Hao
+ * @since 2.4.0
  */
 @Data
 @Schema(description = "微信小程序登录结果")
-public class WechatLoginResult {
+public class WechatMiniappLoginResult {
 
     @Schema(description = "是否新用户")
     private Boolean isNewUser;
@@ -30,13 +33,13 @@ public class WechatLoginResult {
     private String tokenType;
 
     @Schema(description = "过期时间（秒）")
-    private Long expiresIn;
+    private Integer expiresIn;
 
     /**
      * 创建需要绑定手机号的结果
      */
-    public static WechatLoginResult needBindMobile(String openid) {
-        WechatLoginResult result = new WechatLoginResult();
+    public static WechatMiniappLoginResult needBindMobile(String openid) {
+        WechatMiniappLoginResult result = new WechatMiniappLoginResult();
         result.setIsNewUser(true);
         result.setNeedBindMobile(true);
         result.setOpenid(openid);
@@ -46,8 +49,8 @@ public class WechatLoginResult {
     /**
      * 创建登录成功的结果
      */
-    public static WechatLoginResult success(AuthenticationToken token) {
-        WechatLoginResult result = new WechatLoginResult();
+    public static WechatMiniappLoginResult success(AuthenticationToken token) {
+        WechatMiniappLoginResult result = new WechatMiniappLoginResult();
         result.setIsNewUser(false);
         result.setNeedBindMobile(false);
         result.setAccessToken(token.getAccessToken());

@@ -276,5 +276,5 @@ public class UserController {
         return Result.judge(result);
     }
 
-   
+
 }

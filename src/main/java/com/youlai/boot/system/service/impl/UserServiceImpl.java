@@ -432,8 +432,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         // String code = String.valueOf((int) ((Math.random() * 9 + 1) * 1000));
-        // TODO 为了方便测试，验证码固定为 1234，实际开发中在配置了厂商短信服务后，可以使用上面的随机验证码
-        String code = "1234";
+        // TODO 为了方便测试，验证码固定为 123456，实际开发中在配置了厂商短信服务后，可以使用上面的随机验证码
+        String code = "123456";
 
         Map<String, String> templateParams = new HashMap<>();
         templateParams.put("code", code);
@@ -517,8 +517,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         // String code = String.valueOf((int) ((Math.random() * 9 + 1) * 1000));
-        // TODO 为了方便测试，验证码固定为 1234，实际开发中在配置了邮箱服务后，可以使用上面的随机验证码
-        String code = "1234";
+        // TODO 为了方便测试，验证码固定为 123456，实际开发中在配置了邮箱服务后，可以使用上面的随机验证码
+        String code = "123456";
 
         mailService.sendMail(email, "邮箱验证码", "您的验证码为：" + code + "，请在5分钟内使用");
         // 缓存验证码，5分钟有效，用于更换邮箱校验

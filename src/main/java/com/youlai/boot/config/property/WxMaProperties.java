@@ -1,4 +1,4 @@
-package com.youlai.boot.config;
+package com.youlai.boot.config.property;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,28 +11,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class WxMaProperties {
 
     /**
-     * 小程序appid
+     * 小程序 AppID
      */
     private String appid;
 
     /**
-     * 小程序Secret
+     * 小程序 AppSecret
      */
     private String secret;
-
-    /**
-     * 小程序token
-     */
-    private String token;
-
-    /**
-     * 小程序EncodingAESKey
-     */
-    private String aesKey;
-
-    /**
-     * 消息格式
-     */
-    private String msgDataFormat;
 
 }
