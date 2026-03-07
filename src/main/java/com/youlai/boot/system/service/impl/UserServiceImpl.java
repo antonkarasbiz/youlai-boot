@@ -25,7 +25,9 @@ import com.youlai.boot.system.mapper.UserMapper;
 import com.youlai.boot.system.model.bo.UserBO;
 import com.youlai.boot.system.model.dto.CurrentUserDTO;
 import com.youlai.boot.system.model.dto.UserExportDTO;
+import com.youlai.boot.system.model.entity.Dept;
 import com.youlai.boot.system.model.entity.DictItem;
+import com.youlai.boot.system.model.entity.Role;
 import com.youlai.boot.system.model.entity.User;
 import com.youlai.boot.system.model.form.*;
 import com.youlai.boot.system.model.query.UserQuery;
@@ -57,6 +59,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private final PasswordEncoder passwordEncoder;
 
     private final UserRoleService userRoleService;
+
+    private final DeptService deptService;
 
     private final RoleService roleService;
 
@@ -121,10 +125,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean saveUser(UserForm userForm) {
 
         String username = userForm.getUsername();
-        
+
         // 实体转换 form->entity
         User entity = userConverter.toEntity(userForm);
-        
+
         // 检查用户名是否已存在
         long count = this.count(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, username));
@@ -157,7 +161,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean updateUser(Long userId, UserForm userForm) {
 
         String username = userForm.getUsername();
-        
+
         // 获取原用户信息
         User oldUser = this.getById(userId);
         Assert.notNull(oldUser, "用户不存在");
@@ -197,7 +201,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         List<Long> ids = Arrays.stream(idsStr.split(","))
                 .map(Long::parseLong)
                 .collect(Collectors.toList());
-        
+
         boolean result = this.removeByIds(ids);
         return result;
     }
@@ -297,15 +301,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                         User::getId,
                         User::getUsername,
                         User::getNickname,
-                        User::getAvatar
+                        User::getAvatar,
+                        User::getGender,
+                        User::getDeptId
                 )
         );
         // entity->Vo
         CurrentUserDTO userInfoVo = userConverter.toCurrentUserDto(user);
 
+        // 性别
+        userInfoVo.setGender(user.getGender());
+
+        // 部门名称
+        if (user.getDeptId() != null) {
+            Dept dept = deptService.getById(user.getDeptId());
+            if (dept != null) {
+                userInfoVo.setDeptName(dept.getName());
+            }
+        }
+
         // 用户角色集合
         Set<String> roles = SecurityUtils.getRoles();
         userInfoVo.setRoles(roles);
+
+        // 用户角色名称集合
+        if (CollectionUtil.isNotEmpty(roles)) {
+            Set<String> roleNames = roleService.list(new LambdaQueryWrapper<Role>()
+                            .in(Role::getCode, roles)
+                            .select(Role::getName)
+                    ).stream()
+                    .map(Role::getName)
+                    .filter(StrUtil::isNotBlank)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+            userInfoVo.setRoleNames(roleNames);
+        }
 
         // 用户权限集合
         if (CollectionUtil.isNotEmpty(roles)) {

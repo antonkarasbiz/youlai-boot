@@ -27,12 +27,20 @@ public class CurrentUserDTO {
     @Schema(description="头像地址")
     private String avatar;
 
+    @Schema(description = "性别(1-男 2-女 0-保密)")
+    private Integer gender;
+
+    @Schema(description = "部门名称")
+    private String deptName;
+
     @Schema(description="用户角色编码集合")
     private Set<String> roles;
+
+    @Schema(description = "用户角色名称集合")
+    private Set<String> roleNames;
 
     @Schema(description="用户权限标识集合")
     private Set<String> perms;
 
 }
 
- 
