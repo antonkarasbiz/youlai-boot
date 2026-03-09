@@ -32,29 +32,19 @@
 
 ### 为什么选择 youlai-boot？
 
-| 特性 | 说明 |
-|------|------|
-| 🚀 **最新技术栈** | Spring Boot 4 + JDK 17，持续跟进最新版本 |
+| 特性              | 说明                                                  |
+| ----------------- | ----------------------------------------------------- |
+| 🚀 **最新技术栈** | Spring Boot 4 + JDK 17，持续跟进最新版本              |
 | 🔐 **企业级认证** | Spring Security + JWT + Redis，支持令牌续期、多端互斥 |
-| 🔑 **细粒度权限** | RBAC 模型，接口级 + 按钮级权限控制 |
-| 🛠️ **开箱即用** | 用户、角色、菜单、部门、字典等核心模块 |
-| 📦 **代码生成** | 内置代码生成器，快速构建 CRUD 功能 |
-| 🌐 **完整生态** | PC 端 + 移动端配套项目，多语言后端支持 |
-
-### 系统预览
-
-<!-- 待补充：系统预览截图 -->
-<div align="center">
-  <img src="系统预览图URL" width="800">
-  <p><i>系统预览（点击 <a href="https://vue.youlai.tech/">在线预览</a> 体验完整功能）</i></p>
-</div>
-
----
+| 🔑 **细粒度权限** | RBAC 模型，接口级 + 按钮级权限控制                    |
+| 🛠️ **开箱即用**   | 用户、角色、菜单、部门、字典等核心模块                |
+| 📦 **代码生成**   | 内置代码生成器，快速构建 CRUD 功能                    |
+| 🌐 **完整生态**   | Web 管理前端 + 移动端配套项目，多语言后端支持         |
 
 ## 🌈 相关项目
 
 | 项目 | 技术栈 | 说明 |
-|------|--------|------|
+| --- | --- | --- |
 | [vue3-element-admin](https://gitee.com/youlaiorg/vue3-element-admin) | Vue 3 + Element Plus | 配套前端 |
 | [vue3-element-template](https://gitee.com/youlaiorg/vue3-element-template) | Vue 3 + Element Plus | 前端精简模板 |
 | [youlai-boot-tenant](https://gitee.com/youlaiorg/youlai-boot-tenant) | Spring Boot 4 | 多租户 SaaS 版 |
@@ -90,13 +80,13 @@ git clone https://gitee.com/youlaiorg/youlai-boot.git
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/youlai_admin
-    username: root
-    password: your_password
+    url: jdbc:mysql://localhost:3306/youlai_admin # 数据库连接地址
+    username: root # 数据库用户名
+    password: 123456 # 数据库密码
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: localhost # Redis 地址
+      port: 6379 # Redis 端口
 ```
 
 > 💡 默认连接线上环境（仅读权限），可直接启动体验。
@@ -143,10 +133,10 @@ docker-compose up -d
 
 ## 📚 技术文档
 
-| 文档 | 地址 |
-|------|------|
-| 官方文档 | [youlai.tech](https://www.youlai.tech/youlai-boot/) |
-| 入门指南 | [CSDN 博客](https://youlai.blog.csdn.net/article/details/145177011) |
+| 文档     | 地址                                                                               |
+| -------- | ---------------------------------------------------------------------------------- |
+| 官方文档 | [youlai.tech](https://www.youlai.tech/youlai-boot/)                                |
+| 入门指南 | [CSDN 博客](https://youlai.blog.csdn.net/article/details/145177011)                |
 | 接口文档 | [Apifox](https://www.apifox.cn/apidoc/shared-195e783f-4d85-4235-a038-eec696de4ea5) |
 
 ---
