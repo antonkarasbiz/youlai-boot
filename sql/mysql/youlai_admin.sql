@@ -129,7 +129,7 @@ CREATE TABLE `sys_menu`  (
                              `redirect` varchar(128) COMMENT '跳转路径',
                              `create_time` datetime NULL COMMENT '创建时间',
                              `update_time` datetime NULL COMMENT '更新时间',
-                             `params` varchar(255) NULL COMMENT '路由参数',
+                             `params` json NULL COMMENT '路由参数',
                              PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COMMENT = '系统菜单表';
 
@@ -188,6 +188,7 @@ INSERT INTO `sys_menu` VALUES (2513, 251, '0,1,251', '字典项编辑', 'B', NUL
 INSERT INTO `sys_menu` VALUES (2514, 251, '0,1,251', '字典项删除', 'B', NULL, '', NULL, 'sys:dict-item:delete', NULL, NULL, 1, 4, '', NULL, now(), now(), NULL);
 
 INSERT INTO `sys_menu` VALUES (260, 1, '0,1', '系统日志', 'M', 'Log', 'log', 'system/log/index', NULL, 0, 1, 1, 7, 'document', NULL, now(), now(), NULL);
+INSERT INTO `sys_menu` VALUES (2601, 260, '0,1,260', '日志查询', 'B', NULL, '', NULL, 'sys:log:list', NULL, NULL, 1, 1, '', NULL, now(), now(), NULL);
 
 INSERT INTO `sys_menu` VALUES (270, 1, '0,1', '系统配置', 'M', 'Config', 'config', 'system/config/index', NULL, 0, 1, 1, 8, 'setting', NULL, now(), now(), NULL);
 INSERT INTO `sys_menu` VALUES (2701, 270, '0,1,270', '系统配置查询', 'B', NULL, '', NULL, 'sys:config:list', 0, 1, 1, 1, '', NULL, now(), now(), NULL);

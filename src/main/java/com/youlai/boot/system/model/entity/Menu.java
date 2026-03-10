@@ -1,11 +1,12 @@
 package com.youlai.boot.system.model.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 /**
  * 菜单实体
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
  * @author Ray.Hao
  * @since 2023/3/6
  */
-@TableName("sys_menu")
+@TableName(value = "sys_menu", autoResultMap = true)
 @Getter
 @Setter
 public class Menu {
@@ -96,8 +97,8 @@ public class Menu {
     /**
      * 路由参数
      */
-    @TableField(updateStrategy = FieldStrategy.ALWAYS)
-    private String params;
+    @TableField(updateStrategy = FieldStrategy.ALWAYS, typeHandler = JacksonTypeHandler.class)
+    private Map<String, Object> params;
 
 
     @TableField(fill = FieldFill.INSERT)

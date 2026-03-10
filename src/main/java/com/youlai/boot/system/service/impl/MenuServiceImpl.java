@@ -4,12 +4,9 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import tools.jackson.core.type.TypeReference;
-import tools.jackson.databind.ObjectMapper;
 import com.youlai.boot.tool.codegen.model.entity.GenTable;
 import com.youlai.boot.security.util.SecurityUtils;
 import com.youlai.boot.system.converter.MenuConverter;
@@ -159,7 +156,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         } else {
             // 普通用户：通过角色获取菜单（权限控制已过滤）
             menuList = this.baseMapper.getMenusByRoleCodes(roleCodes);
-            
+
             // 双重保障：动态查询"平台管理"目录，过滤其子菜单
             // 通过路由路径识别平台管理目录，避免硬编码
             Menu platformMenu = this.getOne(new LambdaQueryWrapper<Menu>()
@@ -168,7 +165,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                     .eq(Menu::getType, MenuTypeEnum.CATALOG.getValue())
                     .last("LIMIT 1")
             );
-            
+
             if (platformMenu != null) {
                 final Long platformMenuId = platformMenu.getId();
                 menuList = menuList.stream()
@@ -188,10 +185,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
     /**
      * 获取当前用户的菜单路由列表（指定数据源）
-     * 
+     *
      * @param datasource 数据源名称
      *                   - master: 主库菜单数据
-     *                   - naiveui: NaiveUI项目菜单数据  
+     *                   - naiveui: NaiveUI项目菜单数据
      *                   - template: 模板项目菜单数据
      */
     @Override
@@ -260,17 +257,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         }
         meta.setAlwaysShow(ObjectUtil.equals(menu.getAlwaysShow(), 1));
 
-        String paramsJson = menu.getParams();
-        // 将 JSON 字符串转换为 Map<String, String>
-        if (StrUtil.isNotBlank(paramsJson)) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                Map<String, String> paramMap = objectMapper.readValue(paramsJson, new TypeReference<>() {
-                });
-                meta.setParams(paramMap);
-            } catch (Exception e) {
-                throw new RuntimeException("解析参数失败", e);
-            }
+        Map<String, Object> paramsMap = menu.getParams();
+        if (paramsMap != null && !paramsMap.isEmpty()) {
+            Map<String, String> paramMap = paramsMap.entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> String.valueOf(e.getValue())));
+            meta.setParams(paramMap);
         }
         routeVo.setMeta(meta);
         return routeVo;
@@ -305,10 +296,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         entity.setTreePath(treePath);
 
         List<KeyValue> params = menuForm.getParams();
-        // 路由参数 [{key:"id",value:"1"}，{key:"name",value:"张三"}] 转换为 [{"id":"1"},{"name":"张三"}]
         if (CollectionUtil.isNotEmpty(params)) {
-            entity.setParams(JSONUtil.toJsonStr(params.stream()
-                    .collect(Collectors.toMap(KeyValue::getKey, KeyValue::getValue))));
+            entity.setParams(params.stream()
+                    .collect(Collectors.toMap(KeyValue::getKey, KeyValue::getValue)));
         } else {
             entity.setParams(null);
         }
@@ -400,27 +390,14 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         Menu entity = this.getById(id);
         Assert.isTrue(entity != null, "菜单不存在");
         MenuForm formData = menuConverter.toForm(entity);
-        // 路由参数字符串 {"id":"1","name":"张三"} 转换为 [{key:"id", value:"1"}, {key:"name", value:"张三"}]
-        String params = entity.getParams();
-        if (StrUtil.isNotBlank(params)) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                // 解析 JSON 字符串为 Map<String, String>
-                Map<String, String> paramMap = objectMapper.readValue(params, new TypeReference<>() {
-                });
-
-                // 转换为 List<KeyValue> 格式 [{key:"id", value:"1"}, {key:"name", value:"张三"}]
-                List<KeyValue> transformedList = paramMap.entrySet().stream()
-                        .map(entry -> new KeyValue(entry.getKey(), entry.getValue()))
-                        .toList();
-
-                // 将转换后的列表存入 MenuForm
-                formData.setParams(transformedList);
-            } catch (Exception e) {
-                throw new RuntimeException("解析参数失败", e);
-            }
+        // 路由参数 Map 转换为 [{key:"id", value:"1"}, {key:"name", value:"张三"}]
+        Map<String, Object> paramsMap = entity.getParams();
+        if (paramsMap != null && !paramsMap.isEmpty()) {
+            List<KeyValue> transformedList = paramsMap.entrySet().stream()
+                    .map(entry -> new KeyValue(entry.getKey(), String.valueOf(entry.getValue())))
+                    .toList();
+            formData.setParams(transformedList);
         }
-
         return formData;
     }
 
