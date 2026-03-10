@@ -216,5 +216,5 @@ captcha:
 # 微信小程序配置
 wx:
   miniapp:
-    appid: wx99a151dc43d2637b
-    secret: fa2d74fd9f340ff1017c96fcbd19f5ad
+    appid: xxxxxxx
+    secret: xxxxxxx
