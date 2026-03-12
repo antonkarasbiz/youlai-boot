@@ -156,8 +156,8 @@ springdoc:
       packages-to-scan: # 扫描的 Controller 包，限制只生成指定包的接口文档
         - com.youlai.boot.auth.controller
         - com.youlai.boot.system.controller
-        - com.youlai.boot.platform.file.controller
-        - com.youlai.boot.platform.codegen.controller
+        - com.youlai.boot.file.controller
+        - com.youlai.boot.tool.codegen.controller
   default-flat-param-object: true # 将对象参数扁平化显示在文档中
 
 # knife4j 配置
