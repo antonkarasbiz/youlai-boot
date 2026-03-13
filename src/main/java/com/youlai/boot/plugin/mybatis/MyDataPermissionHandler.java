@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.handler.DataPermissionHandler;
 import com.youlai.boot.common.annotation.DataPermission;
 import com.youlai.boot.common.enums.DataScopeEnum;
 import com.youlai.boot.security.model.RoleDataScope;
+import com.youlai.boot.security.model.SysUserDetails;
 import com.youlai.boot.security.util.SecurityUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +57,7 @@ public class MyDataPermissionHandler implements DataPermissionHandler {
 
         // 获取当前用户的数据权限列表
         List<RoleDataScope> dataScopes = SecurityUtils.getUser()
-                .map(user -> user.getDataScopes())
+                .map(SysUserDetails::getDataScopes)
                 .orElse(List.of());
 
         // 如果任一角色是 ALL，则跳过数据权限过滤（并集策略）
