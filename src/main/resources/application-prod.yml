@@ -214,5 +214,5 @@ captcha:
 # 微信小程配置
 wx:
   miniapp:
-    app-id: xxxxxx
-    app-secret: xxxxxx
+    app-id: Your_AppId
+    app-secret: Your_AppSecret
