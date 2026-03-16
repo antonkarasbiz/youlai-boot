@@ -49,6 +49,8 @@ import java.util.stream.Collectors;
 @Service
 public class JwtTokenManager implements TokenManager {
 
+    private static final String ALLOWED_ALGORITHM = "HS256";
+
     private final SecurityProperties securityProperties;
     private final RedisTemplate<String, Object> redisTemplate;
     private final byte[] secretKey;
@@ -91,6 +93,14 @@ public class JwtTokenManager implements TokenManager {
     public Authentication parseToken(String token) {
 
         JWT jwt = JWTUtil.parseToken(token);
+
+        if (!isAlgorithmAllowed(jwt)) {
+            throw new BusinessException(ResultCode.ACCESS_TOKEN_INVALID);
+        }
+        if (!jwt.setKey(secretKey).verify()) {
+            throw new BusinessException(ResultCode.ACCESS_TOKEN_INVALID);
+        }
+
         JSONObject payloads = jwt.getPayloads();
         SysUserDetails userDetails = new SysUserDetails();
         userDetails.setUserId(payloads.getLong(JwtClaimConstants.USER_ID)); // 用户ID
@@ -164,6 +174,11 @@ public class JwtTokenManager implements TokenManager {
      */
     private boolean validateToken(String token, boolean validateRefreshToken) {
         JWT jwt = JWTUtil.parseToken(token);
+
+        if (!isAlgorithmAllowed(jwt)) {
+            return false;
+        }
+
         // 检查 Token 是否有效(验签 + 是否过期)
         boolean isValid = jwt.setKey(secretKey).validate(0);
 
@@ -219,6 +234,11 @@ public class JwtTokenManager implements TokenManager {
             token = token.substring(SecurityConstants.BEARER_TOKEN_PREFIX.length());
         }
         JWT jwt = JWTUtil.parseToken(token);
+
+        if (!isAlgorithmAllowed(jwt) || !jwt.setKey(secretKey).verify()) {
+            return;
+        }
+
         JSONObject payloads = jwt.getPayloads();
         String jti = payloads.getStr(JWTPayload.JWT_ID);
         Integer expirationAt = payloads.getInt(JWTPayload.EXPIRES_AT);
@@ -398,6 +418,14 @@ public class JwtTokenManager implements TokenManager {
         payload.put(JWTPayload.JWT_ID, IdUtil.simpleUUID());
 
         return JWTUtil.createToken(payload, secretKey);
+    }
+
+    /**
+     * 校验JWT算法类型是否在允许的白名单中，防止 alg:none 等算法降级攻击
+     */
+    private boolean isAlgorithmAllowed(JWT jwt) {
+        Object algorithm = jwt.getHeader("alg");
+        return algorithm != null && ALLOWED_ALGORITHM.equals(algorithm.toString());
     }
 
 }

@@ -87,7 +87,7 @@ security:
     access-token-time-to-live: 7200 # 访问令牌 有效期(单位：秒)，默认 2 小时，-1 表示永不过期
     refresh-token-time-to-live: 604800 # 刷新令牌有效期(单位：秒)，默认 7 天，-1 表示永不过期
     jwt:
-      secret-key: SecretKey012345678901234567890123456789012345678901234567890123456789 # JWT密钥(HS256算法至少32字符)
+      secret-key: SecretKey012345678901234567890123456789012345678901234567890123456789 # JWT密钥(HS256算法至少32字符) 【安全警告】生产环境必须更换此默认密钥，否则攻击者可直接伪造合法Token
     redis-token:
       allow-multi-login: true # 是否允许多设备登录
   # 安全白名单路径，仅跳过 AuthorizationFilter 过滤器，还是会走 Spring Security 的其他过滤器(CSRF、CORS等)
