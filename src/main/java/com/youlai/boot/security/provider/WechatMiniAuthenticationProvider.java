@@ -7,9 +7,8 @@ import com.youlai.boot.security.exception.NeedBindMobileException;
 import com.youlai.boot.security.model.SysUserDetails;
 import com.youlai.boot.security.model.UserAuthInfo;
 import com.youlai.boot.security.model.WechatMiniAuthenticationToken;
-import com.youlai.boot.system.enums.SocialPlatformEnum;
+import com.youlai.boot.security.service.SysUserDetailsService;
 import com.youlai.boot.system.model.entity.UserSocial;
-import com.youlai.boot.system.service.UserSocialService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
@@ -27,7 +26,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 public class WechatMiniAuthenticationProvider implements AuthenticationProvider {
 
     private final WxMaService wxMaService;
-    private final UserSocialService userSocialService;
+    private final SysUserDetailsService sysUserDetailsService;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -47,7 +46,7 @@ public class WechatMiniAuthenticationProvider implements AuthenticationProvider 
             log.info("微信小程序登录：openid={}", openid);
 
             // 2. 根据 openid 查询绑定信息
-            UserSocial userSocial = userSocialService.getByPlatformAndOpenid(SocialPlatformEnum.WECHAT_MINI, openid);
+            UserSocial userSocial = sysUserDetailsService.getWechatMiniBindInfo(openid);
 
             if (userSocial == null) {
                 // 未绑定，抛出异常提示需要绑定手机号
@@ -56,7 +55,7 @@ public class WechatMiniAuthenticationProvider implements AuthenticationProvider 
             }
 
             // 3. 获取用户认证信息
-            UserAuthInfo userAuthInfo = userSocialService.getAuthInfoByOpenid(SocialPlatformEnum.WECHAT_MINI, openid);
+            UserAuthInfo userAuthInfo = sysUserDetailsService.getAuthInfoByWechatOpenid(openid);
 
             if (userAuthInfo == null) {
                 log.warn("微信小程序登录失败：用户不存在，openid={}", openid);
@@ -70,7 +69,7 @@ public class WechatMiniAuthenticationProvider implements AuthenticationProvider 
             }
 
             // 5. 更新 session_key
-            userSocialService.updateSessionKey(userSocial.getId(), sessionKey);
+            sysUserDetailsService.updateWechatSessionKey(userSocial.getId(), sessionKey);
 
             // 6. 构建已认证 Token
             SysUserDetails userDetails = new SysUserDetails(userAuthInfo);

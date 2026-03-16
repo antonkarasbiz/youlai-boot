@@ -14,7 +14,6 @@ import com.youlai.boot.security.provider.WechatMiniAuthenticationProvider;
 import com.youlai.boot.security.token.TokenManager;
 import com.youlai.boot.security.service.SysUserDetailsService;
 import com.youlai.boot.system.service.ConfigService;
-import com.youlai.boot.system.service.UserSocialService;
 import com.youlai.boot.system.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +32,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+import java.util.*;
 
 /**
  * Spring Security 配置类
@@ -58,17 +60,17 @@ public class SecurityConfig {
     private final SecurityProperties securityProperties;
 
     private final WxMaService wxMaService;
-    private final UserSocialService userSocialService;
+
+    private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     /**
      * 配置安全过滤链 SecurityFilterChain
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         return http
                 .authorizeHttpRequests(requestMatcherRegistry -> {
-                            // 配置无需登录即可访问的公开接口
+                            // 配置无需登录即可访问的公开接口（配置文件方式）
                             String[] ignoreUrls = securityProperties.getIgnoreUrls();
                             if (ArrayUtil.isNotEmpty(ignoreUrls)) {
                                 requestMatcherRegistry.requestMatchers(ignoreUrls).permitAll();
@@ -138,8 +140,11 @@ public class SecurityConfig {
      * 微信小程序认证 Provider
      */
     @Bean
-    public WechatMiniAuthenticationProvider wechatMiniAuthenticationProvider() {
-        return new WechatMiniAuthenticationProvider(wxMaService, userSocialService);
+    public WechatMiniAuthenticationProvider wechatMiniAuthenticationProvider(
+            WxMaService wxMaService,
+            SysUserDetailsService sysUserDetailsService
+    ) {
+        return new WechatMiniAuthenticationProvider(wxMaService, sysUserDetailsService);
     }
 
     /**
@@ -157,4 +162,5 @@ public class SecurityConfig {
                 wechatMiniAuthenticationProvider
         );
     }
+
 }

@@ -1,7 +1,7 @@
 package com.youlai.boot.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.youlai.boot.tool.codegen.model.entity.GenTable;
+import com.youlai.boot.module.codegen.model.entity.GenTable;
 import com.youlai.boot.system.model.form.MenuForm;
 import com.youlai.boot.common.model.Option;
 import com.youlai.boot.system.model.entity.Menu;
@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * 菜单业务接口
- * 
+ *
  * @author haoxr
  * @since 2020/11/06
  */
@@ -52,7 +52,7 @@ public interface MenuService extends IService<Menu> {
 
     /**
      * 修改菜单显示状态
-     * 
+     *
      * @param menuId 菜单ID
      * @param visible 是否显示(1-显示 0-隐藏)
      */
