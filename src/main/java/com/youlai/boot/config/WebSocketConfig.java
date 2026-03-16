@@ -187,7 +187,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             throw new BadCredentialsException("Token 为空");
         }
 
-        // 解析并验证 Token
+        // 校验 Token 有效性（算法+签名+过期时间+黑名单）
+        if (!tokenManager.validateToken(token)) {
+            log.warn("⚠ 非法连接请求：Token 无效或已过期");
+            throw new BadCredentialsException("Token 无效或已过期");
+        }
+
+        // 解析 Token
         Authentication authentication;
         try {
             authentication = tokenManager.parseToken(token);
